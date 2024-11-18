@@ -67,6 +67,7 @@ FROM (
     SELECT DISTINCT 
         ord.ord_id, 
         ord.total_amount, 
+        ord.payment_type,
         ordS.status, 
         ordD.order_date AS "date", 
         ad.phone_number, 
@@ -105,6 +106,7 @@ FROM (
     SELECT DISTINCT 
         ord.ord_id, 
         ord.total_amount, 
+        ord.payment_type,
         ordS.status, 
         ordD.order_date AS "date", 
         ad.phone_number, 
