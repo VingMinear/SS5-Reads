@@ -255,6 +255,11 @@ class UserController:
             user = cursor.fetchone()
 
             if user:
+                # Check if the user is active
+                if not user['active']:
+                    cursor.close()
+                    return jsonify({'message': 'Your account is currently inactive. Please contact support for assistance or try again later.', 'code': 403}), 403
+
                 # Check password
                 hashed_password = hashlib.sha256(data['password'].encode()).hexdigest()
                 if hashed_password == user['password']:
@@ -275,6 +280,7 @@ class UserController:
 
             cursor.close()
             return jsonify({'message': 'User not found', 'code': 404}), 404
+
         except DatabaseError as e:
             PgConfig.pg_commit()
             return jsonify({'error': 'Database error', 'details': str(e)}), 500

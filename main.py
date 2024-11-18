@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request, send_from_directory, render_template
 from werkzeug.utils import secure_filename
-# from pyfcm import FCMNotification
+# from firebase_admin import credentials, initialize_app
+
 from database.db import PgConfig
 from routes.product_route import product_bp
 from routes.user_route import user_bp
@@ -9,7 +10,8 @@ from routes.order_route import order_bp
 from routes.route_address import address_bp
 from routes.slides_route import slides_bp
 import os
-
+import firebase_admin
+from firebase_admin import credentials, firestore
 app = Flask(__name__)
 
 app.register_blueprint(order_bp, url_prefix='/api/')
@@ -43,9 +45,11 @@ def uploaded_file(filename):
     return send_from_directory('uploads', filename)
 
 #
-# # Initialize FCM with your Firebase server key
-# FCM_SERVER_KEY = "your-firebase-server-key"
-# push_service = FCMNotification(api_key=FCM_SERVER_KEY)
+
+
+# cred = credentials.Certificate("path/to/serviceAccountKey.json")
+# firebase_admin.initialize_app(cred)
+
 
 # @app.route('/send-topic-notification', methods=['POST'])
 # def send_topic_notification():
