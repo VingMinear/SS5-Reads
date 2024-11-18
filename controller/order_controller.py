@@ -230,11 +230,11 @@ INNER JOIN
                    VALUES ({order_id}, {item['product_id']}, {item['qty']}, {amount}, '{current_date}');
                 ''')
 
-            # Insert into sale report
-            query(f"""
-               INSERT INTO tbl_sale_report (customer_name, units, payment_type, amount_sale, date)
-               VALUES ('{customer_name}', {units}, '{payment_type}', {total_amount}, '{current_date}');
-            """)
+            # # Insert into sale report
+            # query(f"""
+            #    INSERT INTO tbl_sale_report (customer_name, units, payment_type, amount_sale, date)
+            #    VALUES ('{customer_name}', {units}, '{payment_type}', {total_amount}, '{current_date}');
+            # """)
 
             return jsonify({'message': 'Order placed successfully', 'code': 200}), 201
 
