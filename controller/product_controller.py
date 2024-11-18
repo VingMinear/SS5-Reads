@@ -267,7 +267,6 @@ class ProductController:
         product_id = request.json.get("product_id")
         try:
             sql = f"DELETE FROM tbl_product WHERE product_id = {product_id};"
-            print(sql)
             query_condition(sql)
             return HelperResponse.success("Product deleted successfully")
         except Exception as e:

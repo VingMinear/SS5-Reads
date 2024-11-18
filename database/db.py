@@ -1,5 +1,5 @@
 import psycopg2
-from psycopg2.extras import DictCursor, RealDictCursor
+from psycopg2.extras import RealDictCursor
 
 # Single connection setup
 con = psycopg2.connect(
@@ -10,7 +10,6 @@ con = psycopg2.connect(
     port="5432",
     cursor_factory=RealDictCursor
 )
-
 
 class PgConfig:
     @staticmethod
@@ -36,6 +35,12 @@ class PgConfig:
         """Commit the current transaction."""
         global con  # Declare global variable
         con.commit()
+
+    @staticmethod
+    def pg_rollback():
+        """Rollback the current transaction."""
+        global con  # Declare global variable
+        con.rollback()
 
     @staticmethod
     def close():
