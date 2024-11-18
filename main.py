@@ -10,8 +10,7 @@ from routes.order_route import order_bp
 from routes.route_address import address_bp
 from routes.slides_route import slides_bp
 import os
-import firebase_admin
-from firebase_admin import credentials, firestore
+
 app = Flask(__name__)
 
 app.register_blueprint(order_bp, url_prefix='/api/')
