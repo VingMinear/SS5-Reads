@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, send_from_directory
+from flask import Flask, jsonify, request, send_from_directory, render_template
 from werkzeug.utils import secure_filename
 # from pyfcm import FCMNotification
 from database.db import PgConfig
@@ -21,7 +21,7 @@ app.register_blueprint(slides_bp, url_prefix='/api/')
 
 @app.route('/')
 def home():
-    return jsonify({"message": "Welcome to the Book Store API!"})
+    return render_template('home.html')
 
 
 # Set the upload folder and allowed file types
@@ -102,6 +102,6 @@ def upload_photo():
 if __name__ == "__main__":
     # Ensure the app is running and PgConfig is ready for queries
     try:
-        app.run(port=8080, debug=True)
+        app.run(port=3000, debug=True)
     finally:
         PgConfig.close()  # Close the database connection when the app stops
