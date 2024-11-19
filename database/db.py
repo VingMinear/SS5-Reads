@@ -8,7 +8,7 @@ con = psycopg2.connect(
     password="root",
     host="localhost",
     port="5432",
-    cursor_factory=RealDictCursor
+    cursor_factory=RealDictCursor   
 )
 
 class PgConfig:

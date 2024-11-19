@@ -1,7 +1,6 @@
 from flask import Flask, jsonify, request, send_from_directory, render_template
+from flask_cors import CORS
 from werkzeug.utils import secure_filename
-# from firebase_admin import credentials, initialize_app
-
 from database.db import PgConfig
 from routes.product_route import product_bp
 from routes.user_route import user_bp
@@ -13,12 +12,16 @@ import os
 
 app = Flask(__name__)
 
+# Enable CORS for the app
+CORS(app)
+
 app.register_blueprint(order_bp, url_prefix='/api/')
 app.register_blueprint(product_bp, url_prefix='/api/')
 app.register_blueprint(user_bp, url_prefix='/api/')
 app.register_blueprint(address_bp, url_prefix='/api/')
 app.register_blueprint(favorite_bp, url_prefix='/api/')
 app.register_blueprint(slides_bp, url_prefix='/api/')
+
 
 @app.route('/')
 def home():
@@ -43,42 +46,6 @@ def allowed_file(filename):
 def uploaded_file(filename):
     return send_from_directory('uploads', filename)
 
-#
-
-
-# cred = credentials.Certificate("path/to/serviceAccountKey.json")
-# firebase_admin.initialize_app(cred)
-
-
-# @app.route('/send-topic-notification', methods=['POST'])
-# def send_topic_notification():
-#     try:
-#         # Parse data from the request
-#         data = request.json
-#         if not data:
-#             return jsonify({"error": "Invalid data"}), 400
-#
-#         topic = data.get("topic")
-#         title = data.get("title", "Default Title")
-#         message = data.get("message", "Default Message")
-#         additional_data = data.get("data", {})  # Optional custom payload
-#
-#         if not topic:
-#             return jsonify({"error": "No topic provided"}), 400
-#
-#         # Send notification to the topic
-#         result = push_service.notify_topic_subscribers(
-#             topic_name=topic,
-#             message_title=title,
-#             message_body=message,
-#             data_message=additional_data
-#         )
-#
-#         return jsonify({"success": True, "response": result}), 200
-#
-#     except Exception as e:
-#         return jsonify({"error": str(e)}), 500
-#
 
 @app.route('/api/upload-photo', methods=['POST'])
 def upload_photo():
