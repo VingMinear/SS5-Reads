@@ -234,7 +234,7 @@ class ProductController:
         try:
             sql = f"""
                 INSERT INTO tbl_product (product_name, qty, category_id, image, price_in, price_out,desc)
-                VALUES ('{product_name}', {qty}, {category_id}, '{image}', {price_in}, {price_out},{desc});
+                VALUES ('{product_name}', {qty}, {category_id}, '{image}', {price_in}, {price_out},'{desc}');
             """
             query_condition(sql)
             return HelperResponse.success("Product added successfully")
@@ -256,7 +256,7 @@ class ProductController:
             sql = f"""
                 UPDATE tbl_product
                 SET product_name = '{product_name}', qty = {qty}, category_id = {category_id},
-                    image = '{image}', price_in = {price_in}, price_out = {price_out} , desc ={desc}
+                    image = '{image}', price_in = {price_in}, price_out = {price_out} , desc ='{desc}'
                 WHERE product_id = {product_id};
             """
             query_condition(sql)
