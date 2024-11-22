@@ -2,7 +2,7 @@ from flask import Flask, jsonify, request, send_from_directory, render_template
 import stripe
 from werkzeug.utils import secure_filename
 from database.db import PgConfig
-
+from flask_cors import CORS
 from routes.product_route import product_bp
 from routes.user_route import user_bp
 from routes.favorite_route import favorite_bp
