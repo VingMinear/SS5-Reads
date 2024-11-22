@@ -40,6 +40,7 @@ class PgConfig:
     def pg_rollback():
         """Rollback the current transaction."""
         global con  # Declare global variable
+        print("---------------rolling back------------")
         con.rollback()
 
     @staticmethod

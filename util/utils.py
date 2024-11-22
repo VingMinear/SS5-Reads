@@ -41,7 +41,8 @@ def query(sql, params=None):
             PgConfig.pg_commit()  # Commit for SELECT queries may not be needed, but can be used if the transaction is required
             return result
         except DatabaseError as e:
-            PgConfig.pg_rollback()  # Rollback transaction on error
+            print(f"database error {e}")
+
             return f"Database error: {str(e)}"
 
 
@@ -57,5 +58,6 @@ def query_condition(sql, params=None):
             PgConfig.pg_commit()  # Commit only for modifying queries
 
         except DatabaseError as e:
-            PgConfig.pg_rollback()  # Rollback on error to ensure the transaction is not left in aborted state
+            print(f"database error {e}")
+
             return f"Database error: {str(e)}"
