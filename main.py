@@ -1,7 +1,8 @@
 from flask import Flask, jsonify, request, send_from_directory, render_template
-from flask_cors import CORS
+import stripe
 from werkzeug.utils import secure_filename
 from database.db import PgConfig
+
 from routes.product_route import product_bp
 from routes.user_route import user_bp
 from routes.favorite_route import favorite_bp
@@ -45,6 +46,29 @@ def allowed_file(filename):
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
     return send_from_directory('uploads', filename)
+
+stripe.api_key = 'sk_test_51PVAzHLRxnMedF0lzFqfkqqqfeXJsMsGiqueXf4v0iFN5u7jiYBhAYlxmdCKerdxwqlrJNkgiDJh7lfAIHNcu24E00Gw9bRSEB'
+@app.route('/create-payment-intent', methods=['GET'])
+def create_payment_intent():
+    try:
+        # Extract amount and currency from the request
+
+        amount = request.args.get('amount', 0)
+        currency = request.args.get('currency', 'usd')
+
+        # Create a PaymentIntent with the specified amount and currency
+        payment_intent = stripe.PaymentIntent.create(
+            amount=amount,
+            currency=currency,
+            # Optionally add payment method options, such as required authentication
+        )
+
+        # Return the client secret for the frontend to confirm the payment
+        return jsonify({
+            'clientSecret': payment_intent.client_secret
+        })
+    except Exception as e:
+        return jsonify(error=str(e)), 500
 
 
 @app.route('/api/upload-photo', methods=['POST'])
