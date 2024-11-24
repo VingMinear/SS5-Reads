@@ -14,7 +14,7 @@ import os
 app = Flask(__name__)
 
 # Enable CORS for the app
-CORS(app)
+CORS(app, resources={r"/api/*": {"origins": "*"}}, supports_credentials=True)
 
 app.register_blueprint(order_bp, url_prefix='/api/')
 app.register_blueprint(product_bp, url_prefix='/api/')
@@ -41,11 +41,6 @@ if not os.path.exists(UPLOAD_FOLDER):
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-
-@app.route('/uploads/<filename>')
-def uploaded_file(filename):
-    return send_from_directory('uploads', filename)
 
 stripe.api_key = 'sk_test_51PVAzHLRxnMedF0lzFqfkqqqfeXJsMsGiqueXf4v0iFN5u7jiYBhAYlxmdCKerdxwqlrJNkgiDJh7lfAIHNcu24E00Gw9bRSEB'
 @app.route('/create-payment-intent', methods=['GET'])
