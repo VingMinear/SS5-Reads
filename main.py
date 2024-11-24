@@ -33,7 +33,7 @@ def home():
 UPLOAD_FOLDER = 'uploads/'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
+app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # 50 MB
 # Create the upload folder if it doesn't exist
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
@@ -73,6 +73,10 @@ def create_payment_intent():
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
     return send_from_directory('uploads', filename)
+
+@app.errorhandler(413)
+def request_entity_too_large(e):
+    return jsonify({'error': 'File too large. Maximum allowed size is 50MB','code':413}), 413
 
 
 @app.route('/api/upload-photo', methods=['POST'])
