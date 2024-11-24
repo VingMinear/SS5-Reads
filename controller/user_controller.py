@@ -191,12 +191,12 @@ class UserController:
             # Proceed with the update if no duplicate email is found
             update_query = """
                 UPDATE tbl_user SET name = %s, email = %s, phone = %s, is_admin = %s,
-                    active = %s, updated_at = CURRENT_TIMESTAMP
+                    active = %s, photo = %s updated_at = CURRENT_TIMESTAMP
                 WHERE id = %s RETURNING id, name, email, phone, is_admin, active, photo;
             """
             cursor.execute(update_query, (
                 data['name'], data['email'], data['phone'], data['is_admin'],
-                data['active'], user_id
+                data['active'], data['photo'], user_id
             ))
             PgConfig.pg_commit()
 
