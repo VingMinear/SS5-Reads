@@ -61,7 +61,6 @@ class UserController:
         except DatabaseError as e:
             PgConfig.pg_commit()
             return jsonify({'error': 'Database error', 'details': str(e), 'code': 500}), 500
-
     @staticmethod
     def create_user():
         data = request.json
@@ -192,12 +191,12 @@ class UserController:
             # Proceed with the update if no duplicate email is found
             update_query = """
                 UPDATE tbl_user SET name = %s, email = %s, phone = %s, is_admin = %s,
-                    active = %s, photo = %s updated_at = CURRENT_TIMESTAMP
+                    active = %s, updated_at = CURRENT_TIMESTAMP
                 WHERE id = %s RETURNING id, name, email, phone, is_admin, active, photo;
             """
             cursor.execute(update_query, (
                 data['name'], data['email'], data['phone'], data['is_admin'],
-                data['active'], data.get(['photo'], ''), user_id
+                data['active'], user_id
             ))
             PgConfig.pg_commit()
 
@@ -259,9 +258,7 @@ class UserController:
                 # Check if the user is active
                 if not user['active']:
                     cursor.close()
-                    return jsonify({
-                                       'message': 'Your account is currently inactive. Please contact support for assistance or try again later.',
-                                       'code': 403}), 403
+                    return jsonify({'message': 'Your account is currently inactive. Please contact support for assistance or try again later.', 'code': 403}), 403
 
                 # Check password
                 hashed_password = hashlib.sha256(data['password'].encode()).hexdigest()
