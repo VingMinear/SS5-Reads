@@ -14,7 +14,7 @@ import os
 app = Flask(__name__)
 
 # Enable CORS for the app
-CORS()
+CORS(app, resources={r"/api/*": {"origins": "*"}}, supports_credentials=True)
 
 app.register_blueprint(order_bp, url_prefix='/api/')
 app.register_blueprint(product_bp, url_prefix='/api/')
