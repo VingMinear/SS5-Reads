@@ -61,6 +61,7 @@ class UserController:
         except DatabaseError as e:
             PgConfig.pg_commit()
             return jsonify({'error': 'Database error', 'details': str(e), 'code': 500}), 500
+
     @staticmethod
     def create_user():
         data = request.json
@@ -196,7 +197,7 @@ class UserController:
             """
             cursor.execute(update_query, (
                 data['name'], data['email'], data['phone'], data['is_admin'],
-                data['active'], data['photo'], user_id
+                data['active'], data.get(['photo'], ''), user_id
             ))
             PgConfig.pg_commit()
 
@@ -258,7 +259,9 @@ class UserController:
                 # Check if the user is active
                 if not user['active']:
                     cursor.close()
-                    return jsonify({'message': 'Your account is currently inactive. Please contact support for assistance or try again later.', 'code': 403}), 403
+                    return jsonify({
+                                       'message': 'Your account is currently inactive. Please contact support for assistance or try again later.',
+                                       'code': 403}), 403
 
                 # Check password
                 hashed_password = hashlib.sha256(data['password'].encode()).hexdigest()
