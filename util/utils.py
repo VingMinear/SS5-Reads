@@ -31,7 +31,7 @@ def query(sql, params=None):
     """Execute a SELECT query with optional parameters."""
     with PgConfig.get_cursor() as cursor:  # Ensures the cursor is properly closed
         try:
-            print(sql)
+            # print(sql)
 
             if params is not None:
                 cursor.execute(sql, params or ())
@@ -50,7 +50,7 @@ def query_condition(sql, params=None):
     """Execute an INSERT, UPDATE, DELETE query with optional parameters."""
     with PgConfig.get_cursor() as cursor:  # Ensures the cursor is properly closed
         try:
-            print(sql)
+            # print(sql)
             if params is not None:
                 cursor.execute(sql, params or ())
             else:
