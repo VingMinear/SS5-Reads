@@ -24,18 +24,22 @@ class AddressController:
     @staticmethod
     def add_address():
         data = request.json
-        required_fields = ['customer_id', 'receiver_name', 'phone_number', 'district', 'province', 'commune', 'house',
-                           'latitude', 'longitude']
+        required_fields = ['customer_id', 'receiver_name', 'phone_number', 'district', 'province', 'commune', 'house']
 
         # Check if all required fields are present
         missing_fields = [field for field in required_fields if field not in data]
         if missing_fields:
             return jsonify({'message': f'Missing required fields: {", ".join(missing_fields)}'}), 400
 
+        # Handle optional latitude and longitude
+        latitude = data.get('latitude')
+        longitude = data.get('longitude')
+
         # Prepare the query to insert the new address
         sql = """
             INSERT INTO tbl_address (customer_id, receiver_name, phone_number, province, district, commune, house, latlng)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, POINT(%s, %s));
+            VALUES (%s, %s, %s, %s, %s, %s, %s, 
+                    CASE WHEN %s IS NOT NULL AND %s IS NOT NULL THEN POINT(%s, %s) ELSE NULL END);
         """
         params = (
             data['customer_id'],
@@ -45,14 +49,16 @@ class AddressController:
             data['district'],
             data['commune'],
             data['house'],
-            data['latitude'],
-            data['longitude']
+            latitude,  # Used in CASE WHEN
+            longitude,  # Used in CASE WHEN
+            latitude,  # Used in POINT()
+            longitude  # Used in POINT()
         )
 
         # Execute the query
         query_condition(sql, params)
 
-        return jsonify({'message': 'Address added successfully','code':200}), 200
+        return jsonify({'message': 'Address added successfully', 'code': 200}), 200
 
     @staticmethod
     def update_address():
