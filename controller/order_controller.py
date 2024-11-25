@@ -68,9 +68,11 @@ FROM (
         ord.ord_id, 
         ord.total_amount, 
         ord.payment_type,
+        ord.address_id,
         ordS.status, 
         ordD.order_date AS "date", 
         ad.phone_number, 
+        ad.id,
         ad.receiver_name, 
         ad.province, 
         ad.commune, 
@@ -93,13 +95,13 @@ FROM (
         ordD.order_date DESC
 ) AS orders
 INNER JOIN 
-    tbl_address ad ON ad.phone_number = orders.phone_number;
+    tbl_address ad ON ad.id = orders.address_id;
 
                 """
                 orders = query(sql, (order_id,))
             else:
                 sql = f"""
-                SELECT 
+                 SELECT 
     orders.*, 
     ad.latlng
 FROM (
@@ -107,11 +109,13 @@ FROM (
         ord.ord_id, 
         ord.total_amount, 
         ord.payment_type,
+		ord.address_id,
         ordS.status, 
         ordD.order_date AS "date", 
         ad.phone_number, 
         ad.receiver_name, 
         ad.province, 
+				ad.id,
         ad.commune, 
         ad.district, 
         ad.house
@@ -126,13 +130,13 @@ FROM (
     INNER JOIN 
         tbl_order_status ordS ON ordS.id = ord.status_id
     WHERE 
-        ord.status_id = {status_id} 
+        ord.status_id = {status_id}
         AND ad.id = ord.address_id
     ORDER BY 
         ordD.order_date DESC
 ) AS orders
 INNER JOIN 
-    tbl_address ad ON ad.phone_number = orders.phone_number;
+    tbl_address ad ON ad.id = orders.address_id;
                 """
 
                 orders = query(sql)
@@ -168,7 +172,7 @@ INNER JOIN
         """
         print(sql)
         order_count = query(sql)
-        return jsonify({'order_count': order_count[0]['order_count'],'code':200}), 200
+        return jsonify({'order_count': order_count[0]['order_count'], 'code': 200}), 200
 
     @staticmethod
     def add_order():
@@ -195,7 +199,6 @@ INNER JOIN
 
             order_id = result[0]['ord_id']
 
-
             units = 0
             for item in products:
                 pro_qty = 0
@@ -208,13 +211,13 @@ INNER JOIN
                     old_sold = product[0]['sold']
 
                 if pro_qty <= 0:
-
                     query(f"DELETE FROM tbl_order WHERE ord_id = {order_id}")
                     return jsonify({'message': 'Product out of stock!'}), 400
 
                 if item['qty'] > pro_qty:
                     print(f'low')
-                    return jsonify({'message': f"Product quantity is not sufficient.\n Available: {pro_qty}.","code":400}), 400
+                    return jsonify(
+                        {'message': f"Product quantity is not sufficient.\n Available: {pro_qty}.", "code": 400}), 400
                 print(f"hererr {product[0]}")
                 amount = item['price'] * item['qty']
                 qty = pro_qty - item['qty']
@@ -273,4 +276,4 @@ INNER JOIN
         #     'to': order[0]['device_id']
         # })
 
-        return jsonify({'message': f'Order status updated to {status_res}' ,'code':200}), 200
+        return jsonify({'message': f'Order status updated to {status_res}', 'code': 200}), 200
