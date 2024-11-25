@@ -9,6 +9,7 @@ from routes.favorite_route import favorite_bp
 from routes.order_route import order_bp
 from routes.route_address import address_bp
 from routes.slides_route import slides_bp
+from routes.stripe_route import stripe_bg
 import os
 
 app = Flask(__name__)
@@ -22,11 +23,22 @@ app.register_blueprint(user_bp, url_prefix='/api/')
 app.register_blueprint(address_bp, url_prefix='/api/')
 app.register_blueprint(favorite_bp, url_prefix='/api/')
 app.register_blueprint(slides_bp, url_prefix='/api/')
+app.register_blueprint(stripe_bg, url_prefix='/api/')
 
 
 @app.route('/')
 def home():
     return render_template('home.html')
+
+
+@app.route('/success')
+def success():
+    return render_template('success_page.html')
+
+
+@app.route('/failed_payment')
+def failed():
+    return render_template('failed.html')
 
 
 # Set the upload folder and allowed file types
@@ -43,40 +55,15 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-stripe.api_key = 'sk_test_51PVAzHLRxnMedF0lzFqfkqqqfeXJsMsGiqueXf4v0iFN5u7jiYBhAYlxmdCKerdxwqlrJNkgiDJh7lfAIHNcu24E00Gw9bRSEB'
-
-
-@app.route('/create-payment-intent', methods=['GET'])
-def create_payment_intent():
-    try:
-        # Extract amount and currency from the request
-
-        amount = request.args.get('amount', 0)
-        currency = request.args.get('currency', 'usd')
-
-        # Create a PaymentIntent with the specified amount and currency
-        payment_intent = stripe.PaymentIntent.create(
-            amount=amount,
-            currency=currency,
-            # Optionally add payment method options, such as required authentication
-        )
-
-        # Return the client secret for the frontend to confirm the payment
-        return jsonify({
-            'clientSecret': payment_intent.client_secret
-        })
-    except Exception as e:
-        return jsonify(error=str(e)), 500
-
-
 # for allow to access route photo
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
     return send_from_directory('uploads', filename)
 
+
 @app.errorhandler(413)
 def request_entity_too_large(e):
-    return jsonify({'error': 'File too large. Maximum allowed size is 50MB','code':413}), 413
+    return jsonify({'error': 'File too large. Maximum allowed size is 50MB', 'code': 413}), 413
 
 
 @app.route('/api/upload-photo', methods=['POST'])
